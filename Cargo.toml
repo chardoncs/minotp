@@ -1,6 +1,6 @@
 [package]
 name = "minotp"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 description = "Dead simple OTP library for Rust."
