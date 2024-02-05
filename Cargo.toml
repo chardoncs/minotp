@@ -22,6 +22,8 @@ homepage = "https://github.com/chardon55/minotp"
 hmac = "0.12"
 
 [dev-dependencies]
+chrono = "^0.4.33"
+data-encoding = "2.5.0"
 sha1 = { version = "0.10", default-features = false }
 sha2 = { version = "0.10", default-features = false }
 sha3 = { version = "0.10", default-features = false }
