@@ -22,13 +22,27 @@ pub(crate) fn truncate(hash: &[u8]) -> u32 {
 /// Returns:
 ///
 /// (counter, remaining seconds until expiration)
-pub(crate) fn calc_totp_counter(interval: u32) -> (u64, u32) {
-    let timestamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .expect("[minotp::Totp] FATAL: Your system time is probably incorrectly set.")
-        .as_secs();
-    
+pub(crate) fn calc_totp_counter(interval: u32, timestamp: u64) -> (u64, u32) {
     let interval = interval as u64;
 
     (timestamp / interval, (interval - timestamp % interval) as u32)
+}
+
+#[inline]
+pub(crate) fn time_now() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .expect("[minotp::Totp] FATAL: Your system time is probably incorrectly set.")
+        .as_secs()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_time_now() {
+        // Compare our own function with the chrono's
+        assert_eq!(time_now(), chrono::Utc::now().timestamp() as u64)
+    }
 }
