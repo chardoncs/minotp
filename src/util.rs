@@ -26,7 +26,7 @@ pub(crate) fn calc_totp_counter(interval: u32) -> (u64, u32) {
     let timestamp = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .expect("[minotp::Totp] FATAL: Your system time is probably incorrectly set.")
-        .as_millis() as u64;
+        .as_secs();
     
     let interval = interval as u64;
 

@@ -3,86 +3,39 @@ use sha1::Sha1;
 use sha2::{Sha256, Sha512};
 use sha3::Sha3_256;
 
-#[test]
-fn hotp_sha1_digit4_default() {
-    let hotp = Hotp::<Sha1>::from_bytes(b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE).unwrap();
+// Helper macros
 
-    assert_eq!(hotp.gen_4(), 7126);
+macro_rules! test_hotp {
+    ($fn_name:ident, $alg:ty, $secret:expr, $counter:expr, $call:ident, $exp:expr $(, params: [$($param:expr),*])?) => {
+        #[test]
+        fn $fn_name() {
+            let hotp = Hotp::<$alg>::from_bytes($secret, $counter).unwrap();
+
+            assert_eq!(hotp.$call($($($param,)*)?), $exp);
+        }
+    };
 }
 
-#[test]
-fn hotp_sha1_digit4_default_str() {
-    let hotp = Hotp::<Sha1>::from_bytes(b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE).unwrap();
+// HOTP
 
-    assert_eq!(hotp.gen_4_str(), "7126");
-}
+test_hotp!(hotp_sha1_digit4_default, Sha1, b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE, gen_4, 7126);
+test_hotp!(hotp_sha1_digit4_default_str, Sha1, b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE, gen_4_str, "7126");
 
-#[test]
-fn hotp_sha1_digit6_default() {
-    let hotp = Hotp::<Sha1>::from_bytes(b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE).unwrap();
+test_hotp!(hotp_sha1_digit6_default, Sha1, b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE, gen_6, 147126);
+test_hotp!(hotp_sha1_digit6_default_str, Sha1, b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE, gen_6_str, "147126");
 
-    assert_eq!(hotp.gen_6(), 147126);
-}
+test_hotp!(hotp_sha1_digit8_default, Sha1, b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE, gen_8, 97147126);
+test_hotp!(hotp_sha1_digit8_default_str, Sha1, b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE, gen_8_str, "97147126");
 
-#[test]
-fn hotp_sha1_digit6_default_str() {
-    let hotp = Hotp::<Sha1>::from_bytes(b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE).unwrap();
+test_hotp!(hotp_sha1_digit8_generic, Sha1, b"98u9u9u(bu(*u(*y89b(b8g", 0x45EE, gen, 97147126, params: [8]);
+test_hotp!(hotp_sha1_digit10_generic, Sha1, b"98u9u9u(bu(*u(*y89b(b8g", 0x45EE, gen, 997147126, params: [10]);
 
-    assert_eq!(hotp.gen_6_str(), "147126");
-}
+test_hotp!(hotp_sha1_digit10_str_leading_zeroes, Sha1, b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE, gen_str, "0997147126", params: [10]);
 
-#[test]
-fn hotp_sha1_digit8_default() {
-    let hotp = Hotp::<Sha1>::from_bytes(b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE).unwrap();
+test_hotp!(hotp_sha256_digit6_default, Sha256, b"111111111111111111111111111", 0xAAAA, gen_6, 646199);
 
-    assert_eq!(hotp.gen_8(), 97147126);
-}
+test_hotp!(hotp_sha512_digit8_default, Sha512, b"111111111111111111111111111", 0xAAAA, gen_8, 55717069);
 
-#[test]
-fn hotp_sha1_digit8_default_str() {
-    let hotp = Hotp::<Sha1>::from_bytes(b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE).unwrap();
+test_hotp!(hotp_sha3_256_digit8_default, Sha3_256, b"111111111111111111111111111", 0xAAAA, gen_8, 49753380);
 
-    assert_eq!(hotp.gen_8_str(), "97147126");
-}
 
-#[test]
-fn hotp_sha1_digit8_generic() {
-    let hotp = Hotp::<Sha1>::from_bytes(b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE).unwrap();
-
-    assert_eq!(hotp.gen(8), 97147126);
-}
-
-#[test]
-fn hotp_sha1_digit10_generic() {
-    let hotp = Hotp::<Sha1>::from_bytes(b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE).unwrap();
-
-    assert_eq!(hotp.gen(10), 997147126);
-}
-
-#[test]
-fn hotp_sha1_digit10_default_str_leading_zeroes() {
-    let hotp = Hotp::<Sha1>::from_bytes(b"98u9U9u(bu(*u(*y89b(b8g", 0x45EE).unwrap();
-
-    assert_eq!(hotp.gen_str(10), "0997147126");
-}
-
-#[test]
-fn hotp_sha256_digit6_default() {
-    let hotp = Hotp::<Sha256>::from_bytes(b"111111111111111111111111111", 0xAAAA).unwrap();
-
-    assert_eq!(hotp.gen_6(), 646199);
-}
-
-#[test]
-fn hotp_sha512_digit8_default() {
-    let hotp = Hotp::<Sha512>::from_bytes(b"111111111111111111111111111", 0xAAAA).unwrap();
-
-    assert_eq!(hotp.gen_8(), 55717069);
-}
-
-#[test]
-fn hotp_sha3_256_digit8_default() {
-    let hotp = Hotp::<Sha3_256>::from_bytes(b"111111111111111111111111111", 0xAAAA).unwrap();
-
-    assert_eq!(hotp.gen_8(), 49753380)
-}
