@@ -9,6 +9,8 @@ mod util;
 pub use hotp::Hotp;
 pub use totp::Totp;
 
+pub use totp::COMMON_INTERVAL;
+
 /// Generate OTP
 pub trait GenerateOtp {
     /// Generate OTP as an unsigned number

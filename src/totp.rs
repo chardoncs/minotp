@@ -13,7 +13,12 @@ use hmac::digest::{
     InvalidLength,
 };
 
-use crate::{util::calc_totp_counter, GenerateOtp, Hotp};
+use crate::{util::{calc_totp_counter, time_now}, GenerateOtp, Hotp};
+
+/// Interval that is commonly adopted among most TOTP services
+///
+/// i.e. 30 seconds
+pub const COMMON_INTERVAL: u32 = 30;
 
 /// TOTP (wrapper of HOTP with counter replaced by datetime)
 pub struct Totp<D>
@@ -55,13 +60,25 @@ where
     where
         Self: Sized,
     {
-        let (counter, remain) = calc_totp_counter(interval);
+        Self::new(secret, interval, time_now())
+    }
+
+    /// Instantiate a TOTP instance
+    ///
+    /// Params:
+    ///
+    /// - secret: Secret
+    /// - interval: Interval in sec
+    /// - timestamp: Specified UNIX timestamp
+    pub fn new(secret: &[u8], interval: u32, timestamp: u64) -> Result<Self, InvalidLength> {
+        let (counter, remain) = calc_totp_counter(interval, timestamp);
 
         Ok(Self {
             hotp: Hotp::from_bytes(secret, counter)?,
             interval,
             remain,
         })
+
     }
 
     /// Interval of current TOTP instance in seconds
