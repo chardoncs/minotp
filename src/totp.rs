@@ -6,7 +6,11 @@ use hmac::digest::{
         CoreProxy,
         FixedOutputCore,
         UpdateCore
-    }, crypto_common::BlockSizeUser, typenum::{IsLess, Le, NonZero, U256}, HashMarker, InvalidLength
+    },
+    crypto_common::BlockSizeUser,
+    typenum::{IsLess, Le, NonZero, U256},
+    HashMarker,
+    InvalidLength,
 };
 
 use crate::{util::calc_totp_counter, GenerateOtp, Hotp};

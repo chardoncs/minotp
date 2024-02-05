@@ -6,10 +6,14 @@ use hmac::{digest::{
         CoreProxy,
         FixedOutputCore,
         UpdateCore
-    }, crypto_common::BlockSizeUser, typenum::{IsLess, Le, NonZero, U256}, HashMarker, InvalidLength
+    },
+    crypto_common::BlockSizeUser,
+    typenum::{IsLess, Le, NonZero, U256},
+    HashMarker,
+    InvalidLength,
 }, Hmac, Mac};
 
-use crate::{util::truncate, GenerateOtp, Verify};
+use crate::{util::truncate, GenerateOtp};
 
 // Direct access of 10 with power of 0~9
 const POW10: [u32; 10] = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000];
