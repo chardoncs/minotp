@@ -6,10 +6,18 @@ License: MIT or Apache-2.0
 
 ## Usage
 
-### Add `minotp` into your project
+### Installation
+
+Add `minotp` into your project.
 
 ```bash
 cargo add minotp
+```
+
+Also the hash you want (e.g., SHA1).
+
+```bash
+cargo add sha1
 ```
 
 ### TOTP (commonly used)
