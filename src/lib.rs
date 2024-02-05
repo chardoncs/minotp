@@ -74,3 +74,24 @@ where
     }
 }
 
+/// Verify the input token
+pub trait Verify {
+    /// Verify the input token as a u32
+    fn verify(self, input: u32, digits: u8) -> bool;
+
+    /// Verify the input token as a reference of string slice
+    fn verify_str(self, input: &str, digits: u8) -> bool;
+}
+
+impl<T> Verify for T
+where
+    T: GenerateOtp,
+{
+    fn verify(self, input: u32, digits: u8) -> bool {
+        self.gen(digits) == input
+    }
+
+    fn verify_str(self, input: &str, digits: u8) -> bool {
+        self.gen_str(digits) == input
+    }
+}

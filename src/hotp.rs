@@ -9,7 +9,7 @@ use hmac::{digest::{
     }, crypto_common::BlockSizeUser, typenum::{IsLess, Le, NonZero, U256}, HashMarker, InvalidLength
 }, Hmac, Mac};
 
-use crate::{util::truncate, GenerateOtp};
+use crate::{util::truncate, GenerateOtp, Verify};
 
 // Direct access of 10 with power of 0~9
 const POW10: [u32; 10] = [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000];
