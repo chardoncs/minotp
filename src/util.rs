@@ -1,4 +1,3 @@
-#[cfg(not(feature = "chrono"))]
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const ENS_BIT: usize = 8;
@@ -30,13 +29,6 @@ pub(crate) fn calc_totp_counter(interval: u32, timestamp: u64) -> (u64, u32) {
 }
 
 #[inline]
-#[cfg(feature = "chrono")]
-pub(crate) fn time_now() -> u64 {
-    chrono::Utc::now().timestamp() as u64
-}
-
-#[inline]
-#[cfg(not(feature = "chrono"))]
 pub(crate) fn time_now() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)

@@ -18,7 +18,6 @@ homepage = "https://github.com/chardon55/minotp"
 
 [dependencies]
 hmac = "0.12"
-chrono = { version = "0.4", optional = true }
 
 [dev-dependencies]
 data-encoding = "2.5.0"
@@ -28,5 +27,4 @@ sha3 = { version = "0.10", default-features = false }
 
 [features]
 default = []
-chrono = ["dep:chrono"]
 
