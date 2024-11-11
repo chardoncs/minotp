@@ -4,7 +4,7 @@ version = "1.2.0"
 edition = "2021"
 
 description = "Simple OTP library for Rust."
-authors = ["Charles Dong <charlesdong_2000@outlook.com>"]
+authors = ["Charles Dong <chardon_cs@proton.me>"]
 
 license = "MIT"
 
