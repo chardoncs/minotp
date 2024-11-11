@@ -28,7 +28,7 @@ use sha1::Sha1;
 
 let secret = b"test";
 
-let totp = Totp::<Sha1>::from_bytes(secret, COMMON_INTERVAL).unwrap();
+let totp = Totp::<Sha1>::from_bytes(secret, 30).unwrap();
 
 // Get remaining seconds
 let _remaining_seconds = totp.remaining_sec();
@@ -53,7 +53,7 @@ let secret_base32_str = "ORSXG5A=";
 
 let secret = BASE32.decode(secret_base32_str.as_bytes()).unwrap();
 
-let totp = Totp::<Sha1>::from_bytes(&secret, COMMON_INTERVAL).unwrap();
+let totp = Totp::<Sha1>::from_bytes(&secret, 30).unwrap();
 
 let _token = totp.gen_6_str();
 
