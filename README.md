@@ -2,7 +2,7 @@
 
 ![GitHub Release](https://img.shields.io/github/v/release/chardon55/minotp)
 
-Dead simple OTP library for Rust.
+Simple OTP library for Rust.
 
 License: MIT or Apache-2.0
 
