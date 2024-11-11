@@ -4,8 +4,6 @@
 
 Simple OTP library for Rust.
 
-License: MIT or Apache-2.0
-
 ## Usage
 
 ### Installation
