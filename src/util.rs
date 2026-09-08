@@ -5,7 +5,7 @@ const ENS_BIT: usize = 8;
 const SIZE: usize = 4;
 
 pub(crate) fn truncate(hash: &[u8]) -> u32 {
-    let offset: u8 = hash.last().or(Some(&0)).unwrap() & 0xF;
+    let offset: u8 = hash.last().unwrap_or(&0) & 0xF;
 
     let mut output = 0u32;
 
@@ -25,7 +25,10 @@ pub(crate) fn truncate(hash: &[u8]) -> u32 {
 pub(crate) fn calc_totp_counter(interval: u32, timestamp: u64) -> (u64, u32) {
     let interval = interval as u64;
 
-    (timestamp / interval, (interval - timestamp % interval) as u32)
+    (
+        timestamp / interval,
+        (interval - timestamp % interval) as u32,
+    )
 }
 
 #[inline]
@@ -35,4 +38,3 @@ pub(crate) fn time_now() -> u64 {
         .expect("[minotp::Totp] FATAL: Your system time is probably incorrectly set.")
         .as_secs()
 }
-

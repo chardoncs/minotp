@@ -26,13 +26,20 @@ pub trait GenerateOtp {
     ///
     /// let hotp = Hotp::<Sha1>::from_bytes(secret, counter).unwrap();
     ///
-    /// let token = hotp.gen(6); // <- here
+    /// let token = hotp.generate(6); // <- here
     ///
     /// // You will get a 6-digit token as an integer
     /// assert_eq!(token, 431881);
     /// ```
-    fn gen(self, digits: u8) -> u32;
-    
+    ///
+    /// # Note
+    ///
+    /// Renamed from `gen` since `gen` became a reserved keyword
+    /// in the Rust 2024 edition.
+    /// Other `gen_*` methods of this crate were renamed to
+    /// `generate_*` accordingly.
+    fn generate(self, digits: u8) -> u32;
+
     /// Generate an OTP token as a string
     ///
     /// # Examples
@@ -46,16 +53,16 @@ pub trait GenerateOtp {
     ///
     /// let hotp = Hotp::<Sha1>::from_bytes(secret, counter).unwrap();
     ///
-    /// let token = hotp.gen_str(6); // <- here
+    /// let token = hotp.generate_str(6); // <- here
     ///
     /// // You will get a 6-digit token as a string
     /// assert_eq!(token, "431881");
     /// ```
-    fn gen_str(self, digits: u8) -> String
+    fn generate_str(self, digits: u8) -> String
     where
         Self: Sized,
     {
-        let s = self.gen(digits).to_string();
+        let s = self.generate(digits).to_string();
         "0".repeat(digits as usize - s.len()) + &s
     }
 }
@@ -75,12 +82,12 @@ pub trait GenerateOtpDefault {
     ///
     /// let hotp = Hotp::<Sha1>::from_bytes(secret, counter).unwrap();
     ///
-    /// let token = hotp.gen_4(); // <- here
+    /// let token = hotp.generate_4(); // <- here
     ///
     /// // You will get a 4-digit token
     /// assert_eq!(token, 1881);
     /// ```
-    fn gen_4(self) -> u16;
+    fn generate_4(self) -> u16;
 
     /// Generate 6-digit OTP as an unsigned number
     ///
@@ -95,12 +102,12 @@ pub trait GenerateOtpDefault {
     ///
     /// let hotp = Hotp::<Sha1>::from_bytes(secret, counter).unwrap();
     ///
-    /// let token = hotp.gen_6(); // <- here
+    /// let token = hotp.generate_6(); // <- here
     ///
     /// // You will get a 6-digit token
     /// assert_eq!(token, 431881);
     /// ```
-    fn gen_6(self) -> u32;
+    fn generate_6(self) -> u32;
 
     /// Generate 8-digit OTP as an unsigned number
     ///
@@ -115,12 +122,12 @@ pub trait GenerateOtpDefault {
     ///
     /// let hotp = Hotp::<Sha1>::from_bytes(secret, counter).unwrap();
     ///
-    /// let token = hotp.gen_8(); // <- here
+    /// let token = hotp.generate_8(); // <- here
     ///
     /// // You will get an 8-digit token
     /// assert_eq!(token, 65431881);
     /// ```
-    fn gen_8(self) -> u32;
+    fn generate_8(self) -> u32;
 
     /// Generate 4-digit OTP as a string
     ///
@@ -135,12 +142,12 @@ pub trait GenerateOtpDefault {
     ///
     /// let hotp = Hotp::<Sha1>::from_bytes(secret, counter).unwrap();
     ///
-    /// let token = hotp.gen_4_str(); // <- here
+    /// let token = hotp.generate_4_str(); // <- here
     ///
     /// // You will get a 4-digit token
     /// assert_eq!(token, "1881");
     /// ```
-    fn gen_4_str(self) -> String;
+    fn generate_4_str(self) -> String;
 
     /// Generate 6-digit OTP as a string
     ///
@@ -155,12 +162,12 @@ pub trait GenerateOtpDefault {
     ///
     /// let hotp = Hotp::<Sha1>::from_bytes(secret, counter).unwrap();
     ///
-    /// let token = hotp.gen_6_str(); // <- here
+    /// let token = hotp.generate_6_str(); // <- here
     ///
     /// // You will get a 6-digit token
     /// assert_eq!(token, "431881");
     /// ```
-    fn gen_6_str(self) -> String;
+    fn generate_6_str(self) -> String;
 
     /// Generate 8-digit OTP as a string
     ///
@@ -175,12 +182,12 @@ pub trait GenerateOtpDefault {
     ///
     /// let hotp = Hotp::<Sha1>::from_bytes(secret, counter).unwrap();
     ///
-    /// let token = hotp.gen_8_str(); // <- here
+    /// let token = hotp.generate_8_str(); // <- here
     ///
     /// // You will get an 8-digit token
     /// assert_eq!(token, "65431881");
     /// ```
-    fn gen_8_str(self) -> String;
+    fn generate_8_str(self) -> String;
 }
 
 impl<T> GenerateOtpDefault for T
@@ -188,33 +195,33 @@ where
     T: GenerateOtp,
 {
     #[inline]
-    fn gen_4(self) -> u16 {
-        self.gen(4) as u16
+    fn generate_4(self) -> u16 {
+        self.generate(4) as u16
     }
 
     #[inline]
-    fn gen_6(self) -> u32 {
-        self.gen(6) as u32
+    fn generate_6(self) -> u32 {
+        self.generate(6)
     }
 
     #[inline]
-    fn gen_8(self) -> u32 {
-        self.gen(8) as u32
+    fn generate_8(self) -> u32 {
+        self.generate(8)
     }
 
     #[inline]
-    fn gen_4_str(self) -> String {
-        self.gen_str(4)
+    fn generate_4_str(self) -> String {
+        self.generate_str(4)
     }
 
     #[inline]
-    fn gen_6_str(self) -> String {
-        self.gen_str(6)
+    fn generate_6_str(self) -> String {
+        self.generate_str(6)
     }
 
     #[inline]
-    fn gen_8_str(self) -> String {
-        self.gen_str(8)
+    fn generate_8_str(self) -> String {
+        self.generate_str(8)
     }
 }
 
@@ -259,12 +266,11 @@ impl<T> Verify for T
 where
     T: GenerateOtp,
 {
-
     fn verify(self, input: u32, digits: u8) -> bool {
-        self.gen(digits) == input
+        self.generate(digits) == input
     }
 
     fn verify_str(self, input: &str, digits: u8) -> bool {
-        self.gen_str(digits) == input
+        self.generate_str(digits) == input
     }
 }

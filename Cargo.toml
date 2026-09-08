@@ -1,7 +1,8 @@
 [package]
 name = "minotp"
-version = "1.2.1"
-edition = "2021"
+version = "2.0.0"
+edition = "2024"
+rust-version = "1.85"
 
 description = "Simple OTP library for Rust."
 authors = ["Charles Dong <chardon_cs@proton.me>"]
@@ -17,13 +18,13 @@ repository = "https://github.com/chardoncs/minotp.git"
 homepage = "https://github.com/chardoncs/minotp"
 
 [dependencies]
-hmac = "0.12"
+hmac = "0.13"
 
 [dev-dependencies]
-data-encoding = "2.6"
-sha1 = { version = "0.10", default-features = false }
-sha2 = { version = "0.10", default-features = false }
-sha3 = { version = "0.10", default-features = false }
+data-encoding = "2.11"
+sha1 = { version = "0.11", default-features = false }
+sha2 = { version = "0.11", default-features = false }
+sha3 = { version = "0.12", default-features = false }
 
 [features]
 default = []

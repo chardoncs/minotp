@@ -1,19 +1,11 @@
 //! TOTP implementation
 
-use hmac::digest::{
-    block_buffer::Eager, core_api::{
-        BufferKindUser,
-        CoreProxy,
-        FixedOutputCore,
-        UpdateCore
-    },
-    crypto_common::BlockSizeUser,
-    typenum::{IsLess, Le, NonZero, U256},
-    HashMarker,
-    InvalidLength,
-};
+use hmac::digest::{Digest, InvalidLength, common::BlockSizeUser};
 
-use crate::{util::{calc_totp_counter, time_now}, GenerateOtp, Hotp};
+use crate::{
+    GenerateOtp, Hotp,
+    util::{calc_totp_counter, time_now},
+};
 
 /// Interval that is commonly adopted among most TOTP services
 ///
@@ -40,11 +32,11 @@ pub const COMMON_INTERVAL: u32 = 30;
 /// let _remaining_seconds = totp.remaining_sec();
 ///
 /// // Get token
-/// let _token = totp.gen_6_str();
+/// let _token = totp.generate_6_str();
 ///
 /// // -- snip -- //
 /// ```
-/// 
+///
 /// ## Base32 secret
 ///
 /// Use a third-party crate (e.g., [`data_encoding`](https://crates.io/crates/data-encoding))
@@ -61,44 +53,19 @@ pub const COMMON_INTERVAL: u32 = 30;
 ///
 /// let totp = Totp::<Sha1>::from_bytes(&secret, COMMON_INTERVAL).unwrap();
 ///
-/// let _token = totp.gen_6_str();
+/// let _token = totp.generate_6_str();
 ///
 /// // -- snip -- //
 /// ```
-pub struct Totp<D>
-where
-    D: CoreProxy,
-    D::Core: HashMarker
-        + UpdateCore
-        + FixedOutputCore
-        + BufferKindUser<BufferKind = Eager>
-        + Default
-        + Clone,
-    <D::Core as BlockSizeUser>::BlockSize: IsLess<U256>,
-    Le<<D::Core as BlockSizeUser>::BlockSize, U256>: NonZero,
-{
+pub struct Totp<D: Digest + BlockSizeUser> {
     hotp: Hotp<D>,
     interval: u32,
     remain: u32,
 }
 
-impl<D> Totp<D>
-where
-    D: CoreProxy,
-    D::Core: HashMarker
-        + UpdateCore
-        + FixedOutputCore
-        + BufferKindUser<BufferKind = Eager>
-        + Default
-        + Clone,
-    <D::Core as BlockSizeUser>::BlockSize: IsLess<U256>,
-    Le<<D::Core as BlockSizeUser>::BlockSize, U256>: NonZero,
-{
+impl<D: Digest + BlockSizeUser> Totp<D> {
     /// Instantiate a TOTP instance
-    pub fn from_bytes(secret: &[u8], interval: u32) -> Result<Self, InvalidLength>
-    where
-        Self: Sized,
-    {
+    pub fn from_bytes(secret: &[u8], interval: u32) -> Result<Self, InvalidLength> {
         Self::new(secret, interval, time_now())
     }
 
@@ -116,7 +83,7 @@ where
     ///
     /// let totp = Totp::<Sha1>::new(secret, interval, unix_timestamp).unwrap();
     ///
-    /// assert_eq!(totp.gen_6_str(), "677062");
+    /// assert_eq!(totp.generate_6_str(), "677062");
     /// ```
     pub fn new(secret: &[u8], interval: u32, timestamp: u64) -> Result<Self, InvalidLength> {
         let (counter, remain) = calc_totp_counter(interval, timestamp);
@@ -126,7 +93,6 @@ where
             interval,
             remain,
         })
-
     }
 
     /// Interval of current TOTP instance in seconds
@@ -140,20 +106,8 @@ where
     }
 }
 
-impl<D> GenerateOtp for Totp<D>
-where
-    D: CoreProxy,
-    D::Core: HashMarker
-        + UpdateCore
-        + FixedOutputCore
-        + BufferKindUser<BufferKind = Eager>
-        + Default
-        + Clone,
-    <D::Core as BlockSizeUser>::BlockSize: IsLess<U256>,
-    Le<<D::Core as BlockSizeUser>::BlockSize, U256>: NonZero,
-{
-    fn gen(self, digits: u8) -> u32 {
-        self.hotp.gen(digits)
+impl<D: Digest + BlockSizeUser> GenerateOtp for Totp<D> {
+    fn generate(self, digits: u8) -> u32 {
+        self.hotp.generate(digits)
     }
 }
-

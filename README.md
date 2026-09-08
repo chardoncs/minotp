@@ -11,7 +11,7 @@ Simple OTP library for Rust.
 Add `minotp` into your project.
 
 ```bash
-cargo add minotp@1
+cargo add minotp@2
 ```
 
 Also all hash libraries you want (e.g., SHA1 of [Rust Crypto](https://github.com/RustCrypto)).
@@ -34,7 +34,7 @@ let totp = Totp::<Sha1>::from_bytes(secret, 30).unwrap();
 let _remaining_seconds = totp.remaining_sec();
 
 // Get token as a 6-digit owned string
-let _token = totp.gen_6_str();
+let _token = totp.generate_6_str();
 
 // -- snip -- //
 ```
@@ -55,7 +55,7 @@ let secret = BASE32.decode(secret_base32_str.as_bytes()).unwrap();
 
 let totp = Totp::<Sha1>::from_bytes(&secret, 30).unwrap();
 
-let _token = totp.gen_6_str();
+let _token = totp.generate_6_str();
 
 // -- snip -- //
 ```
